@@ -1,0 +1,14 @@
+{
+  "name": "nest-app-sample-dev-container",
+  "dockerComposeFile": ["../docker/docker-compose.yml"],
+  "service": "app",
+  "workspaceFolder": "/workspace",
+  "customizations": {
+    "vscode": {
+      "extensions": [
+        "prisma.prisma",
+        "esbenp.prettier-vscode"
+      ]
+    }
+  }
+}
