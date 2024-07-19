@@ -1,0 +1,20 @@
+version: 0.2
+
+phases:
+  pre_build:
+    commands:
+      - echo Logging in to Amazon ECR...
+      - aws ecr get-login-password --region ap-northeast-1 | docker login --username AWS --password-stdin $ECR_REPOSITORY_URI
+      - IMAGE_TAG=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -c 1-7)
+      - export IMAGE_TAG
+  build:
+    commands:
+      - echo Building the Docker image...
+      - docker build -t $ECR_REPOSITORY_URI:$IMAGE_TAG -f Dockerfile.production .
+  post_build:
+    commands:
+      - echo Pushing the Docker image...
+      - docker push $ECR_REPOSITORY_URI:$IMAGE_TAG
+      - printf '[{"name":"cicd-test-backend","imageUri":"%s"}]' $ECR_REPOSITORY_URI:$IMAGE_TAG > image-definitions.json
+artifacts:
+  files: image-definitions.json
